@@ -52,25 +52,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // ----------------------------------------------------
     const btnSelectGait = document.getElementById('btn-select-gait');
     const btnSelectDraw = document.getElementById('btn-select-draw');
+    const btnSelectVoice = document.getElementById('btn-select-voice');
     const groupGaitSamples = document.getElementById('group-gait-samples');
     const groupDrawSamples = document.getElementById('group-draw-samples');
+    const groupVoiceSamples = document.getElementById('group-voice-samples');
     
-    let activeModality = 'gait'; // 'gait' or 'draw'
+    let activeModality = 'gait'; // 'gait', 'draw', or 'voice'
 
     btnSelectGait.addEventListener('click', () => {
         activeModality = 'gait';
         btnSelectGait.classList.add('active');
         btnSelectDraw.classList.remove('active');
+        btnSelectVoice.classList.remove('active');
         groupGaitSamples.classList.remove('hidden');
         groupDrawSamples.classList.add('hidden');
+        groupVoiceSamples.classList.add('hidden');
     });
 
     btnSelectDraw.addEventListener('click', () => {
         activeModality = 'draw';
         btnSelectDraw.classList.add('active');
         btnSelectGait.classList.remove('active');
+        btnSelectVoice.classList.remove('active');
         groupDrawSamples.classList.remove('hidden');
         groupGaitSamples.classList.add('hidden');
+        groupVoiceSamples.classList.add('hidden');
+    });
+
+    btnSelectVoice.addEventListener('click', () => {
+        activeModality = 'voice';
+        btnSelectVoice.classList.add('active');
+        btnSelectGait.classList.remove('active');
+        btnSelectDraw.classList.remove('active');
+        groupVoiceSamples.classList.remove('hidden');
+        groupGaitSamples.classList.add('hidden');
+        groupDrawSamples.classList.add('hidden');
     });
 
     // Thumbnail selection for Drawings
@@ -105,12 +121,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const detailsGait = document.getElementById('details-gait');
     const detailsDraw = document.getElementById('details-draw');
+    const detailsVoice = document.getElementById('details-voice');
 
     // Gait Stats DOM handles
     const valGaitLeftHeel = document.getElementById('val-gait-left-heel');
     const valGaitRightHeel = document.getElementById('val-gait-right-heel');
     const valGaitAsymmetry = document.getElementById('val-gait-asymmetry');
     const valGaitVariability = document.getElementById('val-gait-variability');
+
+    // Voice Stats DOM handles
+    const valVoiceJitter = document.getElementById('val-voice-jitter');
+    const valVoiceShimmer = document.getElementById('val-voice-shimmer');
+    const valVoiceHnr = document.getElementById('val-voice-hnr');
+    const valVoicePpe = document.getElementById('val-voice-ppe');
 
     // Canvas elements
     const canvasOriginal = document.getElementById('canvas-original');
@@ -215,6 +238,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Simulated Database of Voice Results
+    const voiceDb = {
+        'VoCo_01': {
+            name: 'VoCo_01.wav (Control Subject - Sustained \'Ah\')',
+            score: 15,
+            verdict: 'Healthy Control',
+            class: 'verdict-healthy',
+            confidence: '94.8%',
+            jitter: '0.14%',
+            shimmer: '1.82%',
+            hnr: '24.5 dB',
+            ppe: '0.082 (Normal)'
+        },
+        'VoPt_02': {
+            name: 'VoPt_02.wav (PD Patient - Dysarthria Detected)',
+            score: 88,
+            verdict: 'Parkinson\'s Disease',
+            class: 'verdict-parkinson',
+            confidence: '92.4%',
+            jitter: '2.45%',
+            shimmer: '6.78%',
+            hnr: '12.3 dB',
+            ppe: '0.312 (Vocal Micro-Tremor)'
+        },
+        'VoCo_03': {
+            name: 'VoCo_03.wav (Control Subject - Reading Passage)',
+            score: 9,
+            verdict: 'Healthy Control',
+            class: 'verdict-healthy',
+            confidence: '97.2%',
+            jitter: '0.08%',
+            shimmer: '1.24%',
+            hnr: '28.1 dB',
+            ppe: '0.054 (Normal)'
+        },
+        'VoPt_04': {
+            name: 'VoPt_04.wav (PD Patient - High Vocal Tremor)',
+            score: 79,
+            verdict: 'Parkinson\'s Disease',
+            class: 'verdict-parkinson',
+            confidence: '86.5%',
+            jitter: '1.87%',
+            shimmer: '5.12%',
+            hnr: '15.6 dB',
+            ppe: '0.245 (Moderate Tremor)'
+        }
+    };
+
     btnRunDiagnosis.addEventListener('click', () => {
         // Toggle layout to loading
         diagPlaceholder.classList.add('hidden');
@@ -270,11 +341,38 @@ document.addEventListener('DOMContentLoaded', () => {
             // Gait specifics
             detailsGait.classList.remove('hidden');
             detailsDraw.classList.add('hidden');
+            detailsVoice.classList.add('hidden');
 
             valGaitLeftHeel.textContent = data.leftHeel;
             valGaitRightHeel.textContent = data.rightHeel;
             valGaitAsymmetry.textContent = data.asymmetry;
             valGaitVariability.textContent = data.variability;
+            
+        } else if (activeModality === 'voice') {
+            // Retrieve Voice selection
+            const sampleId = document.getElementById('voice-sample-file').value;
+            const data = voiceDb[sampleId];
+
+            // Update details
+            diagSampleName.textContent = data.name;
+            diagModalityBadge.innerHTML = '<i class="fa-solid fa-microphone-lines"></i> Voice Acoustic Features';
+            diagScore.textContent = `${data.score}%`;
+            diagVerdict.textContent = data.verdict;
+            diagVerdict.className = data.class;
+            diagConfidence.textContent = `Prediction Confidence: ${data.confidence}`;
+
+            // Radial Progress Circle animation
+            updateRadialScore(data.score);
+
+            // Voice specifics
+            detailsGait.classList.add('hidden');
+            detailsDraw.classList.add('hidden');
+            detailsVoice.classList.remove('hidden');
+
+            valVoiceJitter.textContent = data.jitter;
+            valVoiceShimmer.textContent = data.shimmer;
+            valVoiceHnr.textContent = data.hnr;
+            valVoicePpe.textContent = data.ppe;
             
         } else {
             // Retrieve Drawing Selection
@@ -293,6 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Drawing specifics
             detailsGait.classList.add('hidden');
             detailsDraw.classList.remove('hidden');
+            detailsVoice.classList.add('hidden');
 
             // Render Drawings dynamically on Canvas!
             renderDrawingCanvas(data.type, data.parkinson);
