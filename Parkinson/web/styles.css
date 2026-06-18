@@ -1035,7 +1035,7 @@ body {
     }
     
     .modalities-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .perf-layout {
@@ -1051,3 +1051,120 @@ body {
         border-bottom: 1px solid var(--border-color);
     }
 }
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 16px;
+        padding: 15px 4%;
+        align-items: center;
+        text-align: center;
+    }
+
+    .nav {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .header-action {
+        margin-top: 4px;
+    }
+
+    .container {
+        padding: 30px 16px;
+    }
+
+    .section {
+        padding: 40px 0;
+    }
+
+    .hero-content h1 {
+        font-size: 34px;
+        line-height: 1.2;
+        letter-spacing: -1px;
+    }
+
+    .subtitle {
+        font-size: 15px;
+        margin-bottom: 24px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .tabs-header {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        padding-bottom: 8px;
+    }
+
+    .tab-btn {
+        padding: 8px 16px;
+        font-size: 13.5px;
+        flex-grow: 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .sandbox-sidebar, 
+    .sandbox-display {
+        padding: 24px 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modalities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .results-top {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .score-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .drawing-results-visual {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text {
+        font-size: 18px;
+    }
+
+    .nav-link {
+        font-size: 13px;
+        gap: 4px;
+    }
+
+    .hero-content h1 {
+        font-size: 26px;
+    }
+
+    .section-header h2 {
+        font-size: 24px;
+    }
+}
+
